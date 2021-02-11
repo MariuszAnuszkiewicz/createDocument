@@ -19,3 +19,4 @@ Route::get('/', function () {
 });
 
 Route::get('index', [DocumentController::class, 'index']);
+
