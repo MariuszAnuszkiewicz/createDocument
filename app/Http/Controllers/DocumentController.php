@@ -9,14 +9,17 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-        $sourceFile = public_path() . '/documents/fields.xlsx';
         $parseXlsx = app(ParseXlsx::class);
+        $sourceFile = $parseXlsx->loadFile('documents');
         $readFile = $parseXlsx->readFile($sourceFile);
-        //dd($readFile);
         if ($request->ajax()) {
-            return response()->json([
-                'criteria' => isset($readFile) ? $readFile : null,
-            ]);
+            if ($sourceFile !== null) {
+                return response()->json([
+                    'criteria' => $readFile,
+                ]);
+            } else {
+                return response()->json(['message' => 'File not exist.']);
+            }
         }
         return view('documents.parseXlsx');
     }
