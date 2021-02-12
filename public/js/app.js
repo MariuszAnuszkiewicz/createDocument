@@ -1876,6 +1876,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -1883,7 +1888,10 @@ __webpack_require__.r(__webpack_exports__);
       criteria: {},
       columnsCollection: [],
       selectedOption: [],
-      increment: 0
+      increment: 0,
+      activeBtn: true,
+      messagesWarning: [],
+      showMessageWarning: 'none'
     };
   },
   computed: {
@@ -1902,6 +1910,12 @@ __webpack_require__.r(__webpack_exports__);
           for (var item in _this.criteria) {
             _this.columnsCollection.push(item);
           }
+        } else {
+          _this.activeBtn = false;
+        }
+
+        if (response.data.message) {
+          _this.showWarning(response.data.message);
         }
       });
     },
@@ -1913,6 +1927,13 @@ __webpack_require__.r(__webpack_exports__);
       var doc = new jspdf__WEBPACK_IMPORTED_MODULE_0__.default();
       doc.text(this.selectedOption, 15, 15);
       doc.save("selected.pdf");
+    },
+    showWarning: function showWarning(warningText) {
+      if (warningText !== null) {
+        this.messagesWarning.push(warningText);
+        this.messagesWarning.splice(1, this.messagesWarning.length);
+        this.showMessageWarning = 'block';
+      }
     }
   },
   mounted: function mounted() {
@@ -1989,7 +2010,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.header-text[data-v-4a2d627a] {\n    color: #8f8f8f;\n}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.header-text[data-v-4a2d627a] {\n    color: #8f8f8f;\n}\n.flash-style-warning[data-v-4a2d627a] {\n    display: none;\n    position: absolute;\n    top: 125px;\n    left: 42.1%;\n    background-color: rgba(245, 34, 70, 0.3);\n    width: 333px;\n    height: 35px;\n    text-align: center;\n    border-radius: 7px;\n}\n.error-explode p[data-v-4a2d627a] {\n    padding-top: 5px;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -22209,74 +22230,101 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
     _c("div", { staticClass: "row justify-content-center" }, [
-      _c("div", { staticClass: "col mt-5" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c("div", { staticClass: "text-danger mb-1" }, [
-          _c("b", [_vm._v(_vm._s(_vm.stepsCounter))])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "form-group pt-4 pb-4 bg-warning" }, [
-          _c(
+      _vm.messagesWarning !== undefined
+        ? _c(
             "div",
-            { staticClass: "row" },
-            _vm._l(_vm.criteria, function(value, index) {
-              return index == _vm.columnsCollection[_vm.increment]
-                ? _c("div", { staticClass: "col-md-6 offset-md-3 bg-light" }, [
-                    _c("div", { staticClass: "pt-2 text-center" }, [
-                      _c("label", { staticClass: "control-label" }, [
-                        _c("strong", [_vm._v(_vm._s(index))])
-                      ])
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "pt-2 pb-2 text-center" }, [
-                      _c(
-                        "select",
-                        {
-                          attrs: { id: "choice-values" },
-                          on: {
-                            change: function($event) {
-                              return _vm.selectField($event)
-                            }
-                          }
-                        },
-                        [
-                          _c("option", [_vm._v(_vm._s("- select criteria -"))]),
-                          _vm._v(" "),
-                          _vm._l(value, function(val) {
-                            return _vm._l(val, function(v) {
-                              return _c(
-                                "option",
-                                { domProps: { value: index + " => " + v } },
-                                [_vm._v(_vm._s(v))]
-                              )
-                            })
-                          })
-                        ],
-                        2
-                      )
-                    ])
-                  ])
-                : _vm._e()
+            {
+              staticClass: "flex flash-container flash-style-warning",
+              style: { display: _vm.showMessageWarning }
+            },
+            _vm._l(_vm.messagesWarning, function(messageWarning) {
+              return _c("div", { staticClass: "error-explode" }, [
+                _c("p", [_vm._v(_vm._s(messageWarning))])
+              ])
             }),
             0
-          ),
-          _vm._v(" "),
-          _vm.increment >= this.columnsCollection.length
-            ? _c("div", { staticClass: "text-center pt-2" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    attrs: { type: "button" },
-                    on: { click: _vm.generatePdf }
-                  },
-                  [_vm._v("Pobierz")]
-                )
-              ])
-            : _vm._e()
-        ])
-      ])
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.messagesWarning[0] === undefined
+        ? _c("div", { staticClass: "col mt-5" }, [
+            _vm._m(0),
+            _vm._v(" "),
+            _c("div", { staticClass: "text-danger mb-1" }, [
+              _c("b", [_vm._v(_vm._s(_vm.stepsCounter))])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group pt-4 pb-4 bg-warning" }, [
+              _c(
+                "div",
+                { staticClass: "row" },
+                _vm._l(_vm.criteria, function(value, index) {
+                  return index == _vm.columnsCollection[_vm.increment]
+                    ? _c(
+                        "div",
+                        { staticClass: "col-md-6 offset-md-3 bg-light" },
+                        [
+                          _c("div", { staticClass: "pt-2 text-center" }, [
+                            _c("label", { staticClass: "control-label" }, [
+                              _c("strong", [_vm._v(_vm._s(index))])
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "pt-2 pb-2 text-center" }, [
+                            _c(
+                              "select",
+                              {
+                                attrs: { id: "choice-values" },
+                                on: {
+                                  change: function($event) {
+                                    return _vm.selectField($event)
+                                  }
+                                }
+                              },
+                              [
+                                _c("option", [
+                                  _vm._v(_vm._s("- select criteria -"))
+                                ]),
+                                _vm._v(" "),
+                                _vm._l(value, function(val) {
+                                  return _vm._l(val, function(v) {
+                                    return _c(
+                                      "option",
+                                      {
+                                        domProps: { value: index + " => " + v }
+                                      },
+                                      [_vm._v(_vm._s(v))]
+                                    )
+                                  })
+                                })
+                              ],
+                              2
+                            )
+                          ])
+                        ]
+                      )
+                    : _vm._e()
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _vm.increment >= this.columnsCollection.length &&
+              this.activeBtn == true
+                ? _c("div", { staticClass: "text-center pt-2" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button" },
+                        on: { click: _vm.generatePdf }
+                      },
+                      [_vm._v("download")]
+                    )
+                  ])
+                : _vm._e()
+            ])
+          ])
+        : _vm._e()
     ])
   ])
 }

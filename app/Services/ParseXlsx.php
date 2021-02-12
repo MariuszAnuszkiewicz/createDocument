@@ -13,11 +13,30 @@ class ParseXlsx
         $this->simpleXLSX = $simpleXLSX;
     }
 
+    public function loadFile($folder)
+    {
+        $dir = public_path() . "/$folder/";
+        $file = null;
+        if ($handle = opendir($dir)) {
+            while (false !== ($entry = readdir($handle))) {
+                if ($entry != "." && $entry != "..") {
+                    if (preg_match("/.xlsx$/i", $entry)) {
+                        $file .= $entry;
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        if (null !== $file) {
+            return $sourceFile = $dir . $file;
+        }
+    }
+
     public function readFile($file)
     {
-        $allowsExtensions = ['xlsx', 'xls'];
+        $allowsExtensions = ['xlsx'];
         $extensions = implode('|', $allowsExtensions);
-        if (filesize($file) > 0) {
+        if ($file !== null) {
             if (preg_match('/^.*\.(' . $extensions . ')$/i', $file)) {
                 if ($xlsx = $this->simpleXLSX->parse($file)) {
                     foreach ($xlsx->rows() as $key => $value) {
@@ -41,8 +60,6 @@ class ParseXlsx
                             $values[$rows['rows'][$j]][] = explode(", ", $arrRows[$i][$j]);
                         }
                     }
-                    //dd($splitValues);
-                    //dd($values);
                 }
             } else {
                 return response()->json(['message' => 'File extension is bad.']);
